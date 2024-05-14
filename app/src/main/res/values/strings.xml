@@ -9,4 +9,11 @@
     <string name="app_first_page_copyright">©Copyright SteelBoys</string>
     <string name="app_root_phone_detected">The phone has been detected as root. This application cannot be used on a rooted phone.</string>
     <string name="app_root_phone_detected_button_ok">Ok</string>
+    <string name="app_dashboard_activity_title">Account</string>
+    <string name="app_dashboard_activity_balance">Balance:</string>
+    <string name="app_dashboard_activity_send_money">Transfer</string>
+    <string name="app_dashboard_activity_IBAN">IBAN:</string>
+    <string name="app_dashboard_activity_amount">Amount:</string>
+    <string name="app_dashboard_activity_send_money_container">Transfer</string>
+    <string name="app_dashboard_activity_card_type">Standard</string>
 </resources>

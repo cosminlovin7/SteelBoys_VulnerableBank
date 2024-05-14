@@ -1,5 +1,6 @@
 package com.steelboys.vulnerablebank;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -83,7 +84,10 @@ public class MainActivity extends AppCompatActivity {
                 if (null != userFetched) {
                     if (username.contentEquals(userFetched.getUsername())) {
                         if (password.contentEquals(userFetched.getPassword())) {
-                            Toast.makeText(MainActivity.this, "Correct username & password!", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(MainActivity.this, "Correct username & password!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+                            intent.putExtra("username", username);
+                            startActivity(intent);
                         } else {
                             Toast.makeText(MainActivity.this, "Wrong username or password!", Toast.LENGTH_SHORT).show();
                         }
