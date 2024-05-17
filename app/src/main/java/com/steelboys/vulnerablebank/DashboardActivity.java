@@ -29,6 +29,9 @@ import com.steelboys.vulnerablebank.utils.Constants;
 
 import org.json.JSONObject;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class DashboardActivity extends AppCompatActivity {
 
 	private TextView textView_name;
@@ -112,8 +115,37 @@ public class DashboardActivity extends AppCompatActivity {
 
 		button_transfer.setOnClickListener(v -> {
 			try {
+				if (progressBar.getVisibility() == View.VISIBLE) {
+					//noop page is loading
+					return;
+				}
+
+				Integer balance = null;
+				try {
+					String balance_value = textView_balance.getText().toString();
+					balance = Integer.valueOf(balance_value.substring(1));
+					Log.d(Constants.TAG_INFO, "balance: " + balance);
+				} catch (Exception e) {
+					Toast.makeText(DashboardActivity.this, "An error occurred during transfer", Toast.LENGTH_SHORT).show();
+					return;
+				}
 				String IBAN = editText_IBAN.getText().toString();
 				int amount = Integer.parseInt(editText_amount.getText().toString());
+
+				if (!isIBANValid(IBAN)) {
+					Toast.makeText(DashboardActivity.this, "Wrong IBAN format.", Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				if (amount < 0 || amount > 10000 || amount > balance) {
+					Toast.makeText(DashboardActivity.this, "Wrong IBAN format.", Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				Intent newIntent = new Intent(DashboardActivity.this, PinValidationActivity.class);
+				newIntent.putExtra("IBAN", IBAN);
+				newIntent.putExtra("amount", amount);
+				startActivity(newIntent);
 
 				Log.d(Constants.TAG_INFO, "IBAN: " + IBAN);
 				Log.d(Constants.TAG_INFO, "amount: " + amount);
@@ -184,5 +216,12 @@ public class DashboardActivity extends AppCompatActivity {
 		}
 
 		Toast.makeText(DashboardActivity.this, message.toString(), Toast.LENGTH_SHORT).show();
+	}
+
+	private boolean isIBANValid(String IBAN) {
+		String IBANPattern = "^CTF(RNCB|ING0|BT00|SDM0)[0-9]{4}PINFLAG2024$";
+		Pattern pattern = Pattern.compile(IBANPattern);
+		Matcher matcher = pattern.matcher(IBAN);
+		return matcher.matches();
 	}
 }

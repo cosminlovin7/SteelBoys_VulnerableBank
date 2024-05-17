@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PinValidationActivity"
+    android:background="@drawable/gradient_background"
+
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/app_pin_validation_pin"/>
+
+        <EditText
+            android:id="@+id/app_pin_validation_editText_pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            />
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/app_pin_validation_button_validate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_pin_validation_button_validate"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#000000"
+        android:layout_gravity="center_horizontal"
+        >
+
+    </Button>
+
+</LinearLayout>

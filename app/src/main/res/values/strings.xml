@@ -16,4 +16,6 @@
     <string name="app_dashboard_activity_amount">Amount:</string>
     <string name="app_dashboard_activity_send_money_container">Transfer</string>
     <string name="app_dashboard_activity_card_type">Standard</string>
+    <string name="app_pin_validation_pin">PIN</string>
+    <string name="app_pin_validation_button_validate">Validate</string>
 </resources>
