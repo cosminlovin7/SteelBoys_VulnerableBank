@@ -11,6 +11,14 @@
     android:orientation="vertical"
     >
 
+    <ProgressBar
+        android:id="@+id/app_dashboard_activity_progress_bar_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
+
     <LinearLayout
         android:id="@+id/dashboard_activity_header"
         android:layout_width="match_parent"

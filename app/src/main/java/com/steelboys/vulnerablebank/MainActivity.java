@@ -15,6 +15,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -106,12 +107,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 				progressBar.setVisibility(View.VISIBLE);
-                JsonObjectRequest loginRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
+                JsonObjectRequest loginRequest = new JsonObjectRequest(
+                    Request.Method.POST,
+                    url,
+                    jsonObject,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject responseJsonObject) {
-                            Log.d(Constants.TAG_INFO, "Response is: " + responseJsonObject.toString());
-
+                            progressBar.setVisibility(View.INVISIBLE);
                             ResponseLoginObj responseLoginObj = null;
 
                             if (null != responseJsonObject) {
@@ -120,29 +123,37 @@ public class MainActivity extends AppCompatActivity {
 
                                 responseLoginObj = gson.fromJson(response, ResponseLoginObj.class);
                             }
-                            progressBar.setVisibility(View.INVISIBLE);
                             handleSuccessfulLogin(username, password, responseLoginObj);
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
+                            progressBar.setVisibility(View.INVISIBLE);
                             Log.d(Constants.TAG_INFO, "Error occurred");
 
                             ResponseLoginObj responseLoginObj = null;
 
-                            if (null != volleyError.networkResponse.data) {
-                                String errorResponse = new String(volleyError.networkResponse.data);
-                                Log.d(Constants.TAG_ERROR, errorResponse);
-                                Gson gson = new Gson();
+                            if (null != volleyError) {
+                                if (null != volleyError.networkResponse) {
+                                    if (null != volleyError.networkResponse.data) {
+                                        String errorResponse = new String(volleyError.networkResponse.data);
+                                        Log.d(Constants.TAG_ERROR, errorResponse);
+                                        Gson gson = new Gson();
 
-                                responseLoginObj = gson.fromJson(errorResponse, ResponseLoginObj.class);
+                                        responseLoginObj = gson.fromJson(errorResponse, ResponseLoginObj.class);
+                                    }
+                                }
                             }
-
-                            progressBar.setVisibility(View.INVISIBLE);
                             handleErrorLogin(responseLoginObj);
                         }
                     }
                 );
+
+                loginRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    20000,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                ));
 
                 queue.add(loginRequest);
             }
@@ -169,27 +180,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleErrorLogin(ResponseLoginObj responseLoginObj) {
-        if (null != responseLoginObj) {
-            Log.d(Constants.TAG_INFO, responseLoginObj.toString());
-        } else {
-            Log.d(Constants.TAG_INFO, "Response login este null");
-        }
-
         StringBuilder message = new StringBuilder();
         if (null != responseLoginObj) {
             int statusCode = responseLoginObj.getStatus();
             switch (statusCode) {
                 case 400:
-                    message.append("Bad request").append(" ");
+                    message.append("Bad request").append("-");
                     break;
                 case 404:
-                    message.append("Not found").append(" ");
+                    message.append("Not found").append("-");
                     break;
                 case 403:
-                    message.append("Unauthorized").append(" ");
+                    message.append("Unauthorized").append("-");
                     break;
                 default:
-                    message.append(statusCode).append(" ");
+                    message.append(statusCode).append("-");
                     break;
             }
             message.append(responseLoginObj.getMessage());
