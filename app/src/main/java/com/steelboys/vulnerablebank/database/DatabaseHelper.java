@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-	private static final String DATABASE_NAME = "vulnerable_bank.db";
+	private static final String DATABASE_NAME = "vulnerable_bank_cached_users.db";
 	private static final int DATABASE_VERSION = 1;
 
 	public DatabaseHelper(
@@ -28,47 +28,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		/**
-		 * USERS(id INTEGER, username TEXT, password TEXT, first_name TEXT, last_name TEXT, phone_no TEXT, balance INTEGER)
+		 * USERS(
+		 * 	id INTEGER,
+		 * 	username TEXT,
+		 * 	password TEXT
+		 * )
 		 */
-		db.execSQL("CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT"
+		db.execSQL("CREATE TABLE cached_users (id INTEGER PRIMARY KEY AUTOINCREMENT"
 			+ ", "
 			+ "username TEXT"
 			+ ", "
 			+ "password TEXT"
-			+ ", "
-			+ "first_name TEXT"
-			+ ", "
-			+ "last_name TEXT"
-			+ ", "
-			+ "phone_no TEXT"
-			+ ", "
-			+ "balance INTEGER"
 			+ ")");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE users");
+		db.execSQL("DROP TABLE cached_users");
+		onCreate(db);
 	}
 
 	public void addUser(
 		final String username,
-		final String password,
-		final String first_name,
-		final String last_name,
-		final String phone_no,
-		final Integer balance
+		final String password
 	) {
 		SQLiteDatabase database = this.getWritableDatabase();
 		ContentValues contentValues = new ContentValues();
 		contentValues.put("username", username);
 		contentValues.put("password", password);
-		contentValues.put("first_name", first_name);
-		contentValues.put("last_name", last_name);
-		contentValues.put("phone_no", phone_no);
-		contentValues.put("balance", balance);
 
-		database.insert("users", null, contentValues);
+		database.insert("cached_users", null, contentValues);
+
+		database.close();
 	}
 
 	public User getUserByUsername(String username) {
@@ -91,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		// Execute the query
 		Cursor cursor = database.query(
-			"users",  // The table to query
+			"cached_users",  // The table to query
 			projection,     // The columns to return
 			selection,      // The columns for the WHERE clause
 			selectionArgs,  // The values for the WHERE clause
@@ -120,17 +111,73 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 							case "password":
 								user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(columnName)));
 								break;
-							case "first_name":
-								user.setFirst_name(cursor.getString(cursor.getColumnIndexOrThrow(columnName)));
+							default:
+								//noop
 								break;
-							case "last_name":
-								user.setLast_name(cursor.getString(cursor.getColumnIndexOrThrow(columnName)));
+						}
+					}
+
+					userList.add(user);
+				} catch (Exception e) {
+					Log.d(Constants.TAG_DATABASE_ERROR, e.getMessage());
+				}
+				// Process the data as needed
+			}
+			cursor.close(); // Close the cursor when done
+		}
+
+		if (! userList.isEmpty()) {
+			return userList.get(0);
+		}
+
+		return null;
+	}
+
+	public User getUserById(Integer id) {
+		if (null == id) {
+			return null;
+		}
+		SQLiteDatabase database = this.getReadableDatabase();
+
+		String[] projection = {
+			"*",
+			// Add other columns as needed
+		};
+
+		// Define the selection criteria (WHERE clause)
+		String selection = "id = ?"; // Example WHERE clause: column_name = ?
+		String[] selectionArgs = { String.valueOf(id) }; // Example value for the WHERE clause
+
+		// Execute the query
+		Cursor cursor = database.query(
+			"cached_users",  // The table to query
+			projection,     // The columns to return
+			selection,      // The columns for the WHERE clause
+			selectionArgs,  // The values for the WHERE clause
+			null,           // Don't group the rows
+			null,           // Don't filter by row groups
+			null            // The sort order
+		);
+
+		List<User> userList = new ArrayList<>();
+		// Process the query results
+		if (cursor != null) {
+			while (cursor.moveToNext()) {
+				// Retrieve data from the cursor
+				String[] columnNames = cursor.getColumnNames();
+
+				try {
+					User user = new User();
+					for (String columnName : columnNames) {
+						switch (columnName) {
+							case "id":
+								user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(columnName)));
 								break;
-							case "phone_no":
-								user.setPhone_no(cursor.getString(cursor.getColumnIndexOrThrow(columnName)));
+							case "username":
+								user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow(columnName)));
 								break;
-							case "balance":
-								user.setBalance(cursor.getInt(cursor.getColumnIndexOrThrow(columnName)));
+							case "password":
+								user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(columnName)));
 								break;
 							default:
 								//noop

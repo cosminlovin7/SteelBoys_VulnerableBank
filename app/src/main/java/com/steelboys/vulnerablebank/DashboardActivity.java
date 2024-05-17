@@ -3,7 +3,6 @@ package com.steelboys.vulnerablebank;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,8 +27,6 @@ public class DashboardActivity extends AppCompatActivity {
 	private EditText editText_IBAN;
 	private EditText editText_amount;
 
-	private DatabaseHelper databaseHelper;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,27 +45,16 @@ public class DashboardActivity extends AppCompatActivity {
 		editText_IBAN = findViewById(R.id.app_dashboard_activity_editText_IBAN);
 		editText_amount = findViewById(R.id.app_dashboard_activity_editText_amount);
 
-		databaseHelper = new DatabaseHelper(this);
-
 		Intent intent = getIntent();
 		String username = intent.getStringExtra("username");
 
-		User user = databaseHelper.getUserByUsername(username);
+		//we should send a fetch data info to the server to get info about the user.
 
 		String fullName = null;
 		Integer balance = null;
-		if (null != user) {
-			Log.d(Constants.TAG_INFO, user.getFirst_name() + ' ' + user.getLast_name());
 
-			fullName = user.getFirst_name() + " " + user.getLast_name();
-			balance = user.getBalance();
-		} else {
-			fullName = "Unknown";
-			balance = 0;
-		}
-
-		textView_name.setText(fullName);
-		textView_balance.setText("$" + balance);
+		textView_name.setText(null != fullName ? fullName : "Unknown");
+		textView_balance.setText("$" + (null != balance ? balance : 0));
 
 		button_transfer.setOnClickListener(v -> {
 			try {
