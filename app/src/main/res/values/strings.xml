@@ -7,8 +7,11 @@
     <string name="app_first_page_button_login_text">Login</string>
     <string name="app_first_page_button_register_text">Register</string>
     <string name="app_first_page_copyright">©Copyright SteelBoys</string>
+    <string name="app_first_page_register_selected">Look into the button click method for the flag</string>
+    <string name="app_first_flag">Hehehehe, you have been bamboozled! This is not the flag!</string>
     <string name="app_root_phone_detected">The phone has been detected as root. This application cannot be used on a rooted phone.</string>
     <string name="app_root_phone_detected_button_ok">Ok</string>
+    <string name="app_root_phone_magic">p6NVdbiSencPIGskfKLOp1Pb+osiRfXR8yCh33NC6C9B7RXdD8gnatY/wSv3fZOs</string>
     <string name="app_dashboard_activity_title">Account</string>
     <string name="app_dashboard_activity_balance">Balance:</string>
     <string name="app_dashboard_activity_send_money">Transfer</string>
@@ -18,4 +21,6 @@
     <string name="app_dashboard_activity_card_type">Standard</string>
     <string name="app_pin_validation_pin">PIN</string>
     <string name="app_pin_validation_button_validate">Validate</string>
+    <string name="app_the_real_flag">Q1RGX1NNRF9DT05HUkFUU19ZT1VfRk9VTkRfVEhFX1JFQUxfRkxBR18yMDI0</string>
+    <string name="app_encryption_key">YWxhY2F6YW1fYmFt</string>
 </resources>

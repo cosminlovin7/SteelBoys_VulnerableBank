@@ -1,5 +1,6 @@
 package com.steelboys.vulnerablebank;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -24,13 +26,22 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.steelboys.vulnerablebank.database.DatabaseHelper;
+import com.steelboys.vulnerablebank.database.SomeSpiceEncryption;
 import com.steelboys.vulnerablebank.requests.RequestLoginObj;
 import com.steelboys.vulnerablebank.requests.ResponseLoginObj;
 import com.steelboys.vulnerablebank.utils.Constants;
 import com.steelboys.vulnerablebank.utils.RootDetectorUtils;
+import com.steelboys.vulnerablebank.utils.SomeFlagStuff;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         button_login.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SuspiciousIndentation")
             @Override
             public void onClick(View v) {
                 String username = editText_username.getText().toString();
@@ -158,6 +170,18 @@ public class MainActivity extends AppCompatActivity {
                 queue.add(loginRequest);
             }
         });
+
+        button_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String hint = getString(R.string.app_first_page_register_selected);
+                if (true) {
+                    button_register.setText(hint);
+                } else {
+                    button_register.setText(SomeFlagStuff.getFlag(getApplicationContext()));
+                }
+            }
+        });
     }
 
     private void handleSuccessfulLogin(
@@ -192,6 +216,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 403:
                     message.append("Unauthorized").append("-");
+                    try {
+                        String foundIt = SomeSpiceEncryption.getDecryptedFlag(getApplicationContext());
+                    } catch (NoSuchPaddingException | NoSuchAlgorithmException |
+                             InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
                 default:
                     message.append(statusCode).append("-");
