@@ -1,6 +1,7 @@
 package com.steelboys.vulnerablebank;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -64,24 +66,25 @@ public class MainActivity extends AppCompatActivity {
 
         if (true == RootDetectorUtils.isDeviceRooted()) {
             Toast.makeText(this, "Device is rooted!", Toast.LENGTH_SHORT).show();
+            AlertDialog alert = new AlertDialog.Builder(this).create();
+            alert.setTitle("Root detected");
+            alert.setMessage("Device is rooted.");
+            alert.setButton(-3, "OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    System.exit(0);
+                }
+            });
+            alert.setCancelable(false);
+//            alert.show();
         } else {
             Toast.makeText(this, "Device is not rooted!", Toast.LENGTH_SHORT).show();
         }
 
         try {
             databaseHelper = new DatabaseHelper(this);
-
-            if (null != databaseHelper.getUserByUsername("admin")) {
-                //noop
-                Log.d(Constants.TAG_INFO, "Admin user exists!");
-            } else {
-                databaseHelper.addUser("admin", "admin");
-
-                Log.d(Constants.TAG_INFO, "Admin user added successfully!");
-            }
         } catch (Exception e) {
             Log.d(Constants.TAG_DATABASE_ERROR, e.getMessage());
-            Log.d(Constants.TAG_DATABASE_ERROR, "Error while inserting default user");
         }
         editText_username = findViewById(R.id.app_first_page_editText_username);
         editText_password = findViewById(R.id.app_first_page_editText_password);
@@ -92,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         button_login.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("SuspiciousIndentation")
             @Override
             public void onClick(View v) {
                 String username = editText_username.getText().toString();
