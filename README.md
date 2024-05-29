@@ -6,6 +6,7 @@ Dragos Petre, SCPD
 Cosmin-Viorel Lovin, SCPD
 
 GitHub link for the Android CTF application: https://github.com/cosminlovin7/SteelBoys_VulnerableBank
+
 GitHub link for the Backend server: https://github.com/cosminlovin7/SteelBoys_VulnerableBank_Server
 
 IMPORTANT: In order to run the application correctly, the backend server must be running.
